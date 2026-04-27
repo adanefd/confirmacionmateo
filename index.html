@@ -216,6 +216,41 @@
             transform: translate3d(0, 0, 0);
         }
 
+        /* Botón de Música Flotante */
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            background-color: var(--dorado-sutil);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: none;
+            transition: transform 0.3s ease;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+        }
+
+        /* Animación de pulso cuando la música suena */
+        .playing {
+            animation: pulse-gold 2s infinite;
+        }
+
+        @keyframes pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(197, 160, 89, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(197, 160, 89, 0); }
+        }
+
         /* --- RESTO DE ESTILOS (IGUALES) --- */
         #flipdown-container { margin-top: 20px; display: flex; justify-content: center; align-items: center; width: 100%; }
         .flipdown { display: flex !important; flex-wrap: nowrap !important; justify-content: center; width: auto !important; transform: scale(0.7); transform-origin: center center; }
@@ -383,6 +418,50 @@
                 observer.observe(element);
             });
         });
+
+        const music = document.getElementById('bgMusic');
+        const btn = document.getElementById('musicBtn');
+        const icon = document.getElementById('musicIcon');
+
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+                btn.classList.add('playing');
+                icon.innerText = '⏸️'; // Icono de pausa
+            } else {
+                music.pause();
+                btn.classList.remove('playing');
+                icon.innerText = '🎵'; // Icono de nota musical
+            }
+        }
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const btn = document.getElementById('musicBtn');
+            const icon = document.getElementById('musicIcon');
+
+            if (music.paused) {
+                // Intentamos reproducir y atrapamos posibles errores
+                music.play().then(() => {
+                    btn.classList.add('playing');
+                    icon.innerText = '⏸️';
+                }).catch(error => {
+                    console.error("Error al reproducir:", error);
+                    alert("No se pudo cargar la música. Revisa que el archivo 'musica.mp3' esté en GitHub.");
+                });
+            } else {
+                music.pause();
+                btn.classList.remove('playing');
+                icon.innerText = '🎵';
+            }
+        }
     </script>
+    <audio id="bgMusic" loop>
+    <source src="song.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <button class="music-control" id="musicBtn" onclick="toggleMusic()">
+        <span id="musicIcon">🎵</span>
+    </button>
 </body>
 </html>
